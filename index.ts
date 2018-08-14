@@ -20,9 +20,11 @@ export class YapsodyAuth {
                 // throw new ValidationError('No Token Found');
                 throw error('No Token Found');
             verify(accessToken, this.jwtSecret, (err, decodedToken: any) => {
-                if(!decodedToken)
+                if(!decodedToken) {
                     // throw new AuthError('Invalid Token');
-                    throw error('Invalid Token');
+                    console.log('token is not valid');
+                    throw error('Invalid Token!!');
+                }
                 return decodedToken;
             });
 
