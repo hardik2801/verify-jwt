@@ -19,16 +19,14 @@ export class YapsodyAuth {
             if(!accessToken)
                 // throw new ValidationError('No Token Found');
                 throw error('No Token Found');
-            return new Promise((resolve, reject) => {
-                verify(accessToken, this.jwtSecret, (err, decodedToken: any) => {
-                    if(!decodedToken) {
-                        // throw new AuthError('Invalid Token');
-                        console.log('token is not valid');
-                        throw error('Invalid Token!!');
-                    }
-                    resolve(decodedToken);
-                    // return decodedToken;
-                });
+           verify(accessToken, this.jwtSecret, (err, decodedToken: any) => {
+               console.log("decoded", decodedToken, err);
+                if(!decodedToken) {
+                    // throw new AuthError('Invalid Token');
+                    console.log('token is not valid');
+                    throw error('Invalid Token!!');
+                }
+                return decodedToken;
             });
         }
         catch (error) {
