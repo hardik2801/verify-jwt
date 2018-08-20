@@ -1,6 +1,6 @@
 {
   "name": "yap-auth-client",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "validate jwt token for yapsody clients",
   "main": "index.js",
   "scripts": {
