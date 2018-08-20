@@ -22,7 +22,7 @@ function verifyUser(req) {
                     }
                     if (data) {
                         console.log('retrieved from redis');
-                       resolve(data);
+                       resolve(JSON.parse(data));
                     }
                 });
                 jwt.verify(req.headers.authtoken, jwtSecret, (err, decodedToken) => {
@@ -30,7 +30,7 @@ function verifyUser(req) {
                     if (!decodedToken) {
                         reject({message:'Invalid Token', code: 403});
                     }
-                    redisClient.set(req.headers.authtoken, decodedToken);
+                    redisClient.set(req.headers.authtoken, JSON.stringify(decodedToken));
                     resolve(decodedToken);
                 });
             } else if (req.body.userName && req.body.password) {
