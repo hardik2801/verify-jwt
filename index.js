@@ -1,8 +1,14 @@
 const jwt = require('jsonwebtoken');
 const requestPromise = require('request-promise');
+var redis = require('redis');
 
 const jwtSecret = process.env.JWT_SECRET || '';
 const authServerUri = 'http://' + process.env.AUTH_SERVER + ':' + process.env.AUTH_SERVER_PORT;
+const redisClient = redis.createClient();
+
+redisClient.on('connect', function() {
+    console.log('connected');
+});
 
 function verifyUser(req) {
     return new Promise((resolve, reject) => {
