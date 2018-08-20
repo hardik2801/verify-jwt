@@ -7,12 +7,12 @@ const authServerUri = 'http://' + process.env.AUTH_SERVER + ':' + process.env.AU
 function verifyUser(req) {
     return new Promise((resolve, reject) => {
         try {
-            if (req.headers.authorization.token) {
+            if (req.headers.authtoken) {
                 // decode the data, cache it and return the same
-                jwt.verify(req.headers.authorization.token, jwtSecret, (err, decodedToken) => {
+                jwt.verify(req.headers.authtoken, jwtSecret, (err, decodedToken) => {
                     // console.log("decoded", decodedToken, err);
                     if (!decodedToken) {
-                        reject('Invalid Token');
+                        reject({message:'Invalid Token', code: 403});
                     }
                     resolve(decodedToken);
                 });
@@ -22,16 +22,17 @@ function verifyUser(req) {
                     resolve(response);
                 }).catch((error) => {
                     //handle error
-                    reject(error);
+                    reject({message: error, code: 401});
                 });
             } else {
                 // return 'Unauthorized'
-                reject('Unauthorized');
+                reject({message:'Unauthorized', code:403});
             }
         }
         catch (error) {
             // return error
-            reject(error);
+            console.log(error, 'catch err');
+            reject({message: error, code:401});
         }
     });
 }
