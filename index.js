@@ -30,7 +30,7 @@ function verifyUser(req) {
                     if (!decodedToken) {
                         reject({message:'Invalid Token', code: 403});
                     }
-                    redisClient.set(req.headers.authtoken, JSON.stringify(decodedToken));
+                    redisClient.set(req.headers.authtoken, JSON.stringify(decodedToken), 'EX', 60 * 60 * 24);
                     resolve(decodedToken);
                 });
             } else if (req.body.userName && req.body.password) {
