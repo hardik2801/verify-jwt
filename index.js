@@ -26,7 +26,7 @@ function verifyUser(req) {
                 });
             } else {
                 // return 'Unauthorized'
-                // reject({message:'Unauthorized', code:403});
+                reject({message:'Unauthorized', code:403});
             }
         }
         catch (error) {
