@@ -7,7 +7,7 @@ const authServerUri = 'http://' + process.env.AUTH_SERVER + ':' + process.env.AU
 const redisClient = redis.createClient();
 
 redisClient.on('connect', function() {
-    console.log('connected');
+    console.log('connected redis');
 });
 
 function verifyUser(req) {
@@ -15,11 +15,22 @@ function verifyUser(req) {
         try {
             if (req.headers.authtoken) {
                 // decode the data, cache it and return the same
+                redisClient.get(req.headers.authtoken, (err, data) => {
+                    console.log('checking redis');
+                    if(err) {
+                        reject(err);
+                    }
+                    if (data) {
+                        console.log('retrieved from redis');
+                       resolve(data);
+                    }
+                });
                 jwt.verify(req.headers.authtoken, jwtSecret, (err, decodedToken) => {
                     // console.log("decoded", decodedToken, err);
                     if (!decodedToken) {
                         reject({message:'Invalid Token', code: 403});
                     }
+                    redisClient.set(req.headers.authtoken, decodedToken);
                     resolve(decodedToken);
                 });
             } else if (req.body.userName && req.body.password) {
