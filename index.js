@@ -34,7 +34,7 @@ function verifyUser(req) {
                     redisClient.set(req.headers.authtoken, JSON.stringify(decodedToken), 'EX', 60 * 60 * 24);
                     resolve(decodedToken);
                 });
-            } else if (req.body.userName && req.body.password) {
+            } else if (req.body.email && req.body.password) {
                 // call http auth server
                 console.log('server not running!');
                 requestPromise({uri: authServerUri + '/login', method: 'GET'}).then((response) => {
