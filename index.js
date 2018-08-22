@@ -37,8 +37,7 @@ function verifyUser(req) {
                 });
             } else if (req.body.email && req.body.password) {
                 // call http auth server
-                console.log('server not running!');
-                requestPromise({uri: authServerUri + '/login', method: 'GET'}).then((response) => {
+                requestPromise({uri: authServerUri + '/login', method: 'POST'}).then((response) => {
                     resolve(response);
                 }).catch((error) => {
                     //handle error
