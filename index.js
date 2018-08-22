@@ -11,6 +11,7 @@ redisClient.on('connect', function() {
 });
 
 function verifyUser(req) {
+    console.log(req.body, 'req body in client');
     return new Promise((resolve, reject) => {
         try {
             if (req.headers.authtoken) {
@@ -35,6 +36,7 @@ function verifyUser(req) {
                 });
             } else if (req.body.userName && req.body.password) {
                 // call http auth server
+                console.log('server not running!');
                 requestPromise({uri: authServerUri + '/login', method: 'GET'}).then((response) => {
                     resolve(response);
                 }).catch((error) => {
