@@ -13,6 +13,7 @@ redisClient.on('connect', function() {
 
 // signup new user
 function registerUser(req) {
+    console.log('new user');
     return new Promise((resolve, reject) => {
         try {
             if(!(req.body.email && req.body.password && req.body.firstName && req.body.lastName)) {
