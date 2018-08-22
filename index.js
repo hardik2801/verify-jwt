@@ -43,6 +43,7 @@ function registerUser(req) {
     });
 }
 
+// authorize user
 function verifyUser(req) {
     return new Promise((resolve, reject) => {
         try {
@@ -60,7 +61,7 @@ function verifyUser(req) {
                 });
                 jwt.verify(req.headers.authtoken, jwtSecret, (err, decodedToken) => {
                     // console.log("decoded", decodedToken, err);
-                    if (!decodedToken) {
+                    if (!decodedToken && (Object.keys(decodedToken).length <= 0)) {
                         reject({message:'Invalid Token', code: 403});
                     }
                     redisClient.set(req.headers.authtoken, JSON.stringify(decodedToken), 'EX', 60 * 60 * 24);
@@ -78,6 +79,9 @@ function verifyUser(req) {
                     json: true
                 }
                 requestPromise(options).then((response) => {
+                    if(response.jwtToken && (Object.keys(response.jwtToken).length > 0)) {
+                        redisClient.set(req.headers.authtoken, JSON.stringify(response.jwtToken), 'EX', 60 * 60 * 24);
+                    }
                     resolve(response);
                 }).catch((error) => {
                     //handle error
@@ -96,6 +100,7 @@ function verifyUser(req) {
     });
 }
 
+// TODO : authorize client
 function verifyClient(req) {
     return new Promise((resolve, reject) => {
         try {
