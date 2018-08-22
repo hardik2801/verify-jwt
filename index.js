@@ -11,8 +11,38 @@ redisClient.on('connect', function() {
     console.log('connected redis');
 });
 
+// signup new user
+function registerUser(req) {
+    return new Promise((resolve, reject) => {
+        try {
+            if(!(req.body.email && req.body.password && req.body.firstName && req.body.lastName)) {
+                reject({message: 'insufficient data!', code: 401})
+            }
+            const options = {
+                uri: authServerUri + 'registeruser', method: 'POST',
+                method: 'POST',
+                body: {
+                    email: req.body.email,
+                    password: req.body.password,
+                    firstName: req.body.firstName,
+                    lastName: req.body.lastName
+                },
+                json: true
+            }
+            requestPromise(options).then((response) => {
+                resolve(response);
+            }).catch((error) => {
+                //handle error
+                reject({message: error, code: 401});
+            });
+
+        } catch (error) {
+
+        }
+    });
+}
+
 function verifyUser(req) {
-    console.log(req.body, 'req body in client');
     return new Promise((resolve, reject) => {
         try {
             if (req.headers.authtoken) {
@@ -91,5 +121,6 @@ function verifyClient(req) {
 
 module.exports = {
     verifyUser: verifyUser,
-    verifyClient: verifyClient
+    verifyClient: verifyClient,
+    registerUser: registerUser
 };
