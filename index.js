@@ -37,7 +37,16 @@ function verifyUser(req) {
                 });
             } else if (req.body.email && req.body.password) {
                 // call http auth server
-                requestPromise({uri: authServerUri + '/login', method: 'POST'}).then((response) => {
+                const options = {
+                    uri: authServerUri + 'login', method: 'POST',
+                    method: 'POST',
+                    body: {
+                        email: req.body.email,
+                        password: req.body.password
+                    },
+                    json: true
+                }
+                requestPromise(options).then((response) => {
                     resolve(response);
                 }).catch((error) => {
                     //handle error
