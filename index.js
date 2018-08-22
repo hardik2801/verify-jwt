@@ -3,7 +3,8 @@ const requestPromise = require('request-promise');
 var redis = require('redis');
 
 const jwtSecret = process.env.JWT_SECRET || '';
-const authServerUri = 'http://' + process.env.AUTH_SERVER + ':' + process.env.AUTH_SERVER_PORT;
+// const authServerUri = 'http://' + process.env.AUTH_SERVER + ':' + process.env.AUTH_SERVER_PORT;
+const authServerUri = 'http://127.0.0.1:3001/users/'
 const redisClient = redis.createClient();
 
 redisClient.on('connect', function() {
