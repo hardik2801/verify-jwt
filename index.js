@@ -79,11 +79,6 @@ function verifyUser(req) {
                     json: true
                 }
                 requestPromise(options).then((response) => {
-                    console.log(response.jwtToken, 'jwt');
-                    if(response.jwtToken && (Object.keys(response.jwtToken).length > 0)) {
-                        console.log('condition passed');
-                        redisClient.set(req.headers.authtoken, JSON.stringify(response.jwtToken), 'EX', 60 * 60 * 24);
-                    }
                     resolve(response);
                 }).catch((error) => {
                     //handle error
