@@ -8,16 +8,15 @@ const authServerUri = 'http://127.0.0.1:3001/users/'
 const redisClient = redis.createClient();
 
 redisClient.on('connect', function() {
-    console.log('connected redis');
+    // console.log('connected redis');
 });
 
 // signup new user
 function registerUser(req) {
-    console.log('new user');
     return new Promise((resolve, reject) => {
         try {
             if(!(req.body.email && req.body.password && req.body.firstName && req.body.lastName)) {
-                reject({message: 'insufficient data!', code: 401})
+                return reject({message: 'insufficient data!', code: 401})
             }
             const options = {
                 uri: authServerUri + 'registeruser', method: 'POST',
@@ -31,14 +30,14 @@ function registerUser(req) {
                 json: true
             }
             requestPromise(options).then((response) => {
-                resolve(response);
+                return resolve(response);
             }).catch((error) => {
                 //handle error
-                reject({message: error, code: 401});
+                return reject({message: error, code: 401});
             });
 
         } catch (error) {
-
+            return reject(error);
         }
     });
 }
@@ -50,23 +49,21 @@ function verifyUser(req) {
             if (req.headers.authtoken) {
                 // decode the data, cache it and return the same
                 redisClient.get(req.headers.authtoken, (err, data) => {
-                    console.log('checking redis');
                     if(err) {
-                        reject(err);
+                        return reject(err);
                     }
                     if (data) {
-                        console.log('retrieved from redis');
-                       resolve(JSON.parse(data));
+                       return resolve(JSON.parse(data));
                     }
                 });
-                console.log(req.headers.authtoken, 'authtoken');
                 jwt.verify(req.headers.authtoken, jwtSecret, (err, decodedToken) => {
-                    console.log("decoded", decodedToken, err);
-                    if (!decodedToken && (Object.keys(decodedToken).length <= 0)) {
-                        reject({message:'Invalid Token', code: 403});
+                    if(err) {
+                        return reject({message:'Invalid Token', code: 403, errName: err.name});
                     }
-                    redisClient.set(req.headers.authtoken, JSON.stringify(decodedToken), 'EX', 60 * 60 * 24);
-                    resolve(decodedToken);
+                    if (!decodedToken || (Object.keys(decodedToken).length <= 0)) {
+                        return reject({message:'Invalid Token', code: 403});
+                    }
+                    return resolve(decodedToken);
                 });
             } else if (req.body.email && req.body.password) {
                 // call http auth server
@@ -80,20 +77,19 @@ function verifyUser(req) {
                     json: true
                 }
                 requestPromise(options).then((response) => {
-                    resolve(response);
+                    return resolve(response);
                 }).catch((error) => {
                     //handle error
-                    reject({message: error, code: 401});
+                    return reject({message: error, code: 401});
                 });
             } else {
                 // return 'Unauthorized'
-                reject({message:'Unauthorized', code:403});
+                return reject({message:'Unauthorized', code:403});
             }
         }
         catch (error) {
             // return error
-            console.log(error, 'catch err');
-            reject({message: error, code:401});
+            return reject(error);
         }
     });
 }
@@ -107,18 +103,18 @@ function verifyClient(req) {
                 jwt.verify(req.headers.client_key, jwtSecret, (err, decodedToken) => {
                     // console.log("decoded", decodedToken, err);
                     if (!decodedToken) {
-                        reject('Invalid Token');
+                        return reject('Invalid Token');
                     }
                     resolve(decodedToken);
                 });
             } else {
                 // return 'Unauthorized'
-                reject('Unauthorized');
+                return reject('Unauthorized');
             }
         }
         catch (error) {
             // return error
-            reject(error);
+            return reject(error);
         }
     });
 }
