@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const requestPromise = require('request-promise');
 var redis = require('redis');
 
-const jwtSecret = process.env.JWT_SECRET || '';
+const jwtSecret = process.env.JWT_SECRET || 'yapsodySecret';
 // const authServerUri = 'http://' + process.env.AUTH_SERVER + ':' + process.env.AUTH_SERVER_PORT;
 const authServerUri = 'http://127.0.0.1:3001/users/'
 const redisClient = redis.createClient();
@@ -59,8 +59,9 @@ function verifyUser(req) {
                        resolve(JSON.parse(data));
                     }
                 });
+                console.log(req.headers.authtoken, 'authtoken');
                 jwt.verify(req.headers.authtoken, jwtSecret, (err, decodedToken) => {
-                    // console.log("decoded", decodedToken, err);
+                    console.log("decoded", decodedToken, err);
                     if (!decodedToken && (Object.keys(decodedToken).length <= 0)) {
                         reject({message:'Invalid Token', code: 403});
                     }
